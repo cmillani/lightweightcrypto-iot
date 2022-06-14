@@ -8,7 +8,7 @@ make all --print-data-base --no-builtin-variables --no-builtin-rules --question
 # This program built for i386-apple-darwin11.3.0
  
 
-# Make data base, printed on Sun Jun  5 15:50:42 2022
+# Make data base, printed on Mon Jun 13 20:32:32 2022
 
 # Variables
 
@@ -24,8 +24,12 @@ _fzf_orig_completion_python = complete -F %s python #_python
 _fzf_orig_completion_perl = complete -F %s perl #_perl
 # environment
 _fzf_orig_completion_ln = complete -o default -F %s ln #_longopt
+ 
 # environment
 VSCODE_LOG_NATIVE = false
+# makefile (from `Makefile', line 16)
+ARDUINO_LIBS = arduino_core.a core/wiring_digital.c.o core/HardwareSerial.cpp.o core/HardwareSerial0.cpp.o core/Print.cpp.o core/abi.cpp.o
+ 
 # automatic
 ?D = $(patsubst %/,%,$(dir $?))
 # environment
@@ -44,10 +48,12 @@ SHELL = /bin/sh
 VSCODE_NLS_CONFIG = {"locale":"en-us","availableLanguages":{},"_languagePackSupport":true}
 # environment
 _ = /usr/bin/make
-# makefile (from `Makefile', line 2)
-CFLAGS = -I src/crypto -DDEBUG
+# makefile (from `Makefile', line 3)
+CFLAGS = -I src/crypto
 # environment
 _fzf_orig_completion_less = complete -o default -F %s less #_longopt
+# makefile (from `Makefile', line 14)
+INCLUDE_AVR = -I$(ARDUINO_AVR)/cores/arduino -I$(ARDUINO_AVR)/variants/standard
 # environment
 _fzf_orig_completion_unzip = complete -F %s unzip #_filedir_xspec
 # environment
@@ -56,6 +62,8 @@ _fzf_orig_completion_ftp = complete -F %s ftp #_known_hosts
 _fzf_orig_completion_tar = complete -F %s tar #_tar
 # makefile (from `Makefile', line 1)
 MAKEFILE_LIST :=  Makefile
+# makefile (from `Makefile', line 15)
+CCAVR = $(ARDUINO_BIN)/avr-g++
 # environment
 _fzf_orig_completion_bzip2 = complete -F %s bzip2 #_bzip2
 # environment
@@ -92,6 +100,8 @@ _fzf_orig_completion_cd = complete -o nospace -F %s cd #_cd
 GOPATH = /Users/carlos/gocode
 # environment
 _fzf_orig_completion_curl = complete -o default -F %s curl #_longopt
+# makefile (from `Makefile', line 9)
+AVRDUDE = $(ARDUINO_BIN)/avrdude
 # environment
 LaunchInstanceID = B10F6693-7B0F-4104-8B25-704EB0BBA626
 # environment
@@ -118,6 +128,8 @@ VSCODE_PIPE_LOGGING = true
 _fzf_orig_completion_ssh = complete -F %s ssh #_ssh
 # environment
 PWD = /Users/carlos/Projects/mo421/lightweightcrypto-iot
+# makefile (from `Makefile', line 10)
+AVR_OBJCPY = $(ARDUINO_BIN)/avr-objcopy
 # environment
 _fzf_orig_completion_diff = complete -o default -F %s diff #_longopt
 # environment
@@ -138,6 +150,8 @@ MAKEFILEPATH := /Applications/Xcode.app/Contents/Developer/Makefiles
 VSCODE_CODE_CACHE_PATH = /Users/carlos/Library/Application Support/Code/CachedData/c3511e6c69bb39013c4a4b7b9566ec1ca73fc4d5
 # environment
 LOGNAME = carlos
+# makefile (from `Makefile', line 6)
+ARDUINO_AVR = /Applications/Arduino.app/Contents/Java/hardware/arduino/avr
 # environment
 APPLICATION_INSIGHTS_NO_DIAGNOSTIC_CHANNEL = true
 # environment
@@ -146,6 +160,8 @@ _fzf_orig_completion_patch = complete -o default -F %s patch #_longopt
 _fzf_orig_completion_java = complete -F %s java #_java
 # environment
 _fzf_orig_completion_rmdir = complete -o default -F %s rmdir #_longopt
+# makefile (from `Makefile', line 11)
+AVR_SIZE = $(ARDUINO_BIN)/avr-size
 # environment
 _fzf_orig_completion_kill = complete -F %s kill #_kill
 # environment
@@ -162,7 +178,7 @@ MAKECMDGOALS := all
 SHLVL = 1
 # environment
 _fzf_orig_completion_export = complete -o default -o nospace -F %s export #_export
-# makefile (from `Makefile', line 1)
+# makefile (from `Makefile', line 2)
 CC = gcc
 # default
 MAKE_VERSION := 3.81
@@ -210,6 +226,8 @@ _fzf_orig_completion_head = complete -o default -F %s head #_longopt
 _fzf_orig_completion_emacs = complete -F %s emacs #_filedir_xspec
 # automatic
 +F = $(notdir $+)
+# makefile (from `Makefile', line 5)
+ARDUINO_BIN = /Applications/Arduino.app/Contents/Java/hardware/tools/avr/bin
 # environment
 _fzf_orig_completion_scp = complete -o nospace -F %s scp #_scp
 # environment
@@ -222,6 +240,8 @@ MAKEFILES :=
 <F = $(notdir $<)
 # environment
 _fzf_orig_completion_wc = complete -o default -F %s wc #_longopt
+# makefile (from `Makefile', line 7)
+AVRDUDE_CONF = /Applications/Arduino.app/Contents/Java/hardware/tools/avr/etc/avrdude.conf
 # environment
 _fzf_orig_completion_mv = complete -o default -F %s mv #_longopt
 # environment
@@ -236,17 +256,21 @@ _fzf_orig_completion_view = complete -F %s view #_filedir_xspec
 ^F = $(notdir $^)
 # environment
 _fzf_orig_completion_g__ = complete -F %s g++ #_gcc
+# makefile (from `Makefile', line 13)
+CCAVR_FLAGS = -g -Os -w -std=gnu++11 -fpermissive -fno-exceptions -ffunction-sections -fuse-linker-plugin -Wl,--gc-sections -fdata-sections -fno-threadsafe-statics -Wno-error=narrowing -MMD -flto -mmcu=atmega328p -DF_CPU=16000000L -DARDUINO=10813 -DARDUINO_AVR_UNO -DARDUINO_ARCH_AVR
 # default
 SUFFIXES := 
 # default
 .INCLUDE_DIRS = /usr/local/include
 # environment
+ 
 _fzf_orig_completion_sed = complete -o default -F %s sed #_longopt
 # environment
 MAKELEVEL := 0
 # environment
 _fzf_orig_completion_bunzip2 = complete -F %s bunzip2 #_filedir_xspec
 # environment
+ 
 CLICOLOR = 1
 # environment
 _fzf_orig_completion_vi = complete -F %s vi #_filedir_xspec
@@ -262,7 +286,7 @@ VSCODE_PID = 3837
 _fzf_orig_completion_sort = complete -o default -F %s sort #_longopt
 # variable set hash-table stats:
  
-# Load=124/1024=12%, Rehash=0, Collisions=6/154=4%
+# Load=134/1024=13%, Rehash=0, Collisions=9/164=5%
 
 # Pattern-specific Variable Values
 
@@ -270,15 +294,25 @@ _fzf_orig_completion_sort = complete -o default -F %s sort #_longopt
 
 # Directories
 
-# . (device 16777220, inode 8654419347): 8 files, no impossibilities.
+# . (device 16777220, inode 8654419347): 10 files, no impossibilities.
 
-# 8 files, no impossibilities in 1 directories.
+# 10 files, no impossibilities in 1 directories.
 
 # Implicit Rules
 
 # No implicit rules.
 
 # Files
+
+avr_bin:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  commands to execute (from `Makefile', line 31):
+	${CCAVR} ${CCAVR_FLAGS} ${INCLUDE_AVR} ${CFLAGS} ${ARDUINO_LIBS} src/benchmark/atmega328.cpp src/crypto/**/*.c -o bin/atmega
+	${AVR_OBJCPY} -O ihex -j .eeprom --set-section-flags=.eeprom=alloc,load --no-change-warnings --change-section-lma .eeprom=0 bin/atmega bin/atmega.eep
+	${AVR_OBJCPY} -O ihex -R .eeprom bin/atmega bin/atmega.hex
+	
 
 all: bench
 #  Command-line target.
@@ -291,10 +325,10 @@ all: bench
 
 bin:
 #  Implicit rule search has not been done.
-#  Last modified 2022-06-05 15:50:28
+#  Last modified 2022-06-13 20:32:22
 #  File has been updated.
 #  Successfully updated.
-#  commands to execute (from `Makefile', line 7):
+#  commands to execute (from `Makefile', line 24):
 	mkdir -p bin
 	
 
@@ -312,11 +346,19 @@ bin:
 # Not a target:
 Makefile:
 #  Implicit rule search has been done.
-#  Last modified 2022-06-05 15:50:26
+#  Last modified 2022-06-13 20:32:19
 #  File has been updated.
 #  Successfully updated.
 # variable set hash-table stats:
 # Load=0/32=0%, Rehash=0, Collisions=0/0=0%
+
+avr_flash: avr_bin
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  commands to execute (from `Makefile', line 36):
+	${AVRDUDE} -C${AVRDUDE_CONF} -v -patmega328p -carduino -P/dev/cu.usbmodem14101 -b115200 -D -Uflash:w:./bin/atmega.hex:i 
+	
 
 # Not a target:
 .DEFAULT:
@@ -329,7 +371,7 @@ clean:
 #  Implicit rule search has not been done.
 #  File does not exist.
 #  File has not been updated.
-#  commands to execute (from `Makefile', line 15):
+#  commands to execute (from `Makefile', line 40):
 	rm -rf bin
 	
 
@@ -357,13 +399,13 @@ bench: bin
 # ? := bin
 # variable set hash-table stats:
 # Load=8/32=25%, Rehash=0, Collisions=1/14=7%
-#  commands to execute (from `Makefile', line 10):
+#  commands to execute (from `Makefile', line 27):
 	${CC} ${CFLAGS} src/benchmark/client.c src/crypto/**/*.c -o bin/client
 	${CC} ${CFLAGS} src/benchmark/server.c src/crypto/**/*.c -o bin/server
 	
 
 # files hash-table stats:
-# Load=8/1024=1%, Rehash=0, Collisions=0/25=0%
+# Load=10/1024=1%, Rehash=0, Collisions=0/28=0%
 # VPATH Search Paths
 
 # No `vpath' search paths.
@@ -375,6 +417,6 @@ bench: bin
 # strcache size: total = 4096 / max = 4096 / min = 4096 / avg = 4096
 # strcache free: total = 4087 / max = 4087 / min = 4087 / avg = 4087
 
-# Finished Make data base on Sun Jun  5 15:50:42 2022
+# Finished Make data base on Mon Jun 13 20:32:32 2022
 
  

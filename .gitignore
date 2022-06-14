@@ -1,6 +1,9 @@
 ### Custom rules
 bin
 
+### Python
+venv
+
 #########
 ### C
 #########
