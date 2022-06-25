@@ -131,13 +131,18 @@ MODE get_mode() {
  */
 
 void send_led() {
-  digitalWrite(LED_PIN, HIGH); // turn the LED on (HIGH is the voltage level)
-  delay(1000);                     // wait for a second
-  digitalWrite(LED_PIN, LOW);  // turn the LED off by making the voltage LOW
-  delay(1000);
-  strcpy(msg, "Hello World");
-  encryptMessage(&client, msg, cypher);
-  mySerial.write(cypher, CYPHER_LEN);
+  if (mySerial.available()) {
+    Serial.println('Did Receive data');
+    mySerial.readBytes(cypher, CYPHER_LEN);
+    int res = decryptMessage(&client, cypher, msg);
+    Serial.write(msg, MSG_LEN);
+    Serial.println();
+    if (res == 0) {
+      if (msg[0] == '0') digitalWrite(LED_PIN, LOW);
+      else if (msg[0] == '1') digitalWrite(LED_PIN, HIGH);
+    }
+  }
+  delay(100);
 }
 
 void setup_led() {

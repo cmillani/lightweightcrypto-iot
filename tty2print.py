@@ -27,7 +27,7 @@ def onclose():
 
 atexit.register(onclose)
 
-def read_n_encrypt(buffer: BinaryIO) -> str:
+def read_n_encrypt(buffer: BinaryIO) -> bytes:
     command = buffer.readline(msglen)
     encrypt.stdin.write(command)
     encrypt.stdin.flush()
@@ -48,6 +48,7 @@ def decrypt_cypher(cypher: bytes) -> bytes:
     print(f'Decrypted is: {str(decrypted)}')
     return decrypted
 
+print('Ready!')
 while True:
     if sys.stdin in select([sys.stdin], [], [], 0)[0]:
         encrypted = read_n_encrypt(sys.stdin.buffer)
