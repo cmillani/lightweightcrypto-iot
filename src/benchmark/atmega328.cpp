@@ -184,11 +184,16 @@ float get_distance_cm() {
 
 void send_rfid() {
   memset(msg, 0, MSG_LEN * sizeof(unsigned char));
-  int size = read_rfid(msg);
+  unsigned char buffer[10] = {0};
+  int size = read_rfid(buffer);
   if (size == 0) {
     return;
   }
 
+  for (byte i = 0; i < size; i++) {
+    sprintf(msg + (2*i), "%02x", buffer[i]);
+  }
+  Serial.println((char *)msg);
   for (byte i = 0; i < size; i++)
   {
     Serial.print(mfrc522.uid.uidByte[i] < 0x10 ? " 0" : " ");

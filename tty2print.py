@@ -45,7 +45,7 @@ def decrypt_cypher(cypher: bytes) -> bytes:
     decrypted = decrypt.stdout.read(msglen)
     hexencrypted = ''.join(format(x, '02x') for x in cypher)
     print(f'Cypher is (hex): {hexencrypted}')
-    print(f'Decrypted is: {decrypted}')
+    print(f'Decrypted is: {str(decrypted)}')
     return decrypted
 
 while True:
