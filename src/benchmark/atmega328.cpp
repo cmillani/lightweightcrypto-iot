@@ -4,23 +4,32 @@
 #include <inttypes.h>
 #include "peer/peer.h"
 #include "rfid/MFRC522.h"
+#include "Ultrasonic.h"
 
 void setup();
 void loop();
 
-#define SS_PIN 10
-#define RST_PIN 9
-MFRC522 mfrc522(SS_PIN, RST_PIN); // Create MFRC522 instance.
-
-const unsigned char key[32] = { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F };
-
+//////// Crypto
 PeerState client;
 unsigned char msg[MSG_LEN] = "HELLO WORLD";
 unsigned char cypher[CYPHER_LEN];
 
+//////// RFID
+#define SS_PIN 10
+#define RST_PIN 9
+MFRC522 mfrc522(SS_PIN, RST_PIN); // Create MFRC522 instance.
+
 void setup_rfid();
 int read_rfid(unsigned char * bytes);
 void send_rfid();
+
+//////// Distance
+#define TRIGGER_PIN 3
+#define ECHO_PIN 2
+Ultrasonic ultrasonic(TRIGGER_PIN, ECHO_PIN);
+
+void send_distance();
+float get_distance_cm();
 
 void setup()
 {
@@ -35,6 +44,8 @@ void setup()
 
 void loop()
 {
+  send_distance();
+  return;
   send_rfid();
   return;
   digitalWrite(LED_BUILTIN, HIGH); // turn the LED on (HIGH is the voltage level)
@@ -43,6 +54,40 @@ void loop()
   delay(1000);
   sendMessage(&client, msg, cypher);
   Serial.write(cypher, CYPHER_LEN);
+}
+
+/**
+ * US Distance Sensor Section
+ * 
+ */
+
+void send_distance() {
+  float distance_cm = get_distance_cm();
+  dtostrf(distance_cm, 1, 2, (char *) msg);
+  
+  Serial.print("Distancia em cm: ");
+  Serial.print((char *) msg);
+  Serial.println();
+
+  sendMessage(&client, msg, cypher);
+  Serial.write(cypher, CYPHER_LEN);
+  Serial.println();
+
+  delay(1000);
+}
+
+/**
+ * @brief Get distance 
+ * 
+ * @return float, max value is 400
+ */
+float get_distance_cm() {
+  long microsec = ultrasonic.timing();
+  float centimeterDistance = ultrasonic.convert(microsec, Ultrasonic::CM);
+  if (centimeterDistance > 400.0) {
+    centimeterDistance = 400; // Clip Maximum distance to supported value
+  }
+  return centimeterDistance;
 }
 
 /**
@@ -56,15 +101,18 @@ void send_rfid() {
   if (size == 0) {
     return;
   }
+
   for (byte i = 0; i < size; i++)
   {
     Serial.print(mfrc522.uid.uidByte[i] < 0x10 ? " 0" : " ");
     Serial.print(mfrc522.uid.uidByte[i], HEX);
   }
   Serial.println();
+
   sendMessage(&client, msg, cypher);
   Serial.write(cypher, CYPHER_LEN);
   Serial.println();
+  
   delay(1000);
 }
 
