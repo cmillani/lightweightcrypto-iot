@@ -1,3 +1,4 @@
+from time import sleep
 import serial
 import sys
 import atexit
@@ -9,7 +10,10 @@ def onclose():
 
 atexit.register(onclose)
 
+msg = 'Hello'
 while True:
-    s = ser.read(48)
-    sys.stdout.buffer.write(s)
-    sys.stdout.flush()
+    ser.write([ord(char) for char in msg])
+    sleep(1)
+    #s = ser.read(48)
+    #sys.stdout.buffer.write(s)
+    #sys.stdout.flush()

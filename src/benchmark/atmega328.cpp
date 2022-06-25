@@ -5,9 +5,13 @@
 #include "peer/peer.h"
 #include "rfid/MFRC522.h"
 #include "Ultrasonic.h"
+#include "SoftwareSerial.h"
 
 void setup();
 void loop();
+
+//////// Command Bluetooth Serial
+SoftwareSerial mySerial(5, 6); // RX, TX
 
 //////// Crypto
 PeerState client;
@@ -54,6 +58,7 @@ void setup()
 {
   initPeer(&client);
   Serial.begin(9600);
+  mySerial.begin(9600);
   setup_rfid();
   setup_led();
   setup_modeselector(US_MODE_PIN, TAG_MODE_PIN, LED_MODE_PIN);
@@ -114,8 +119,9 @@ void send_led() {
   delay(1000);                     // wait for a second
   digitalWrite(LED_PIN, LOW);  // turn the LED off by making the voltage LOW
   delay(1000);
-  //sendMessage(&client, msg, cypher);
-  //Serial.write(cypher, CYPHER_LEN);
+  strcpy(msg, "Hello World");
+  sendMessage(&client, msg, cypher);
+  mySerial.write(cypher, CYPHER_LEN);
 }
 
 void setup_led() {
@@ -136,8 +142,7 @@ void send_distance() {
   Serial.println();
 
   sendMessage(&client, msg, cypher);
-  Serial.write(cypher, CYPHER_LEN);
-  Serial.println();
+  mySerial.write(cypher, CYPHER_LEN);
 
   delay(1000);
 }
@@ -176,8 +181,7 @@ void send_rfid() {
   Serial.println();
 
   sendMessage(&client, msg, cypher);
-  Serial.write(cypher, CYPHER_LEN);
-  Serial.println();
+  mySerial.write(cypher, CYPHER_LEN);
   
   delay(1000);
 }

@@ -13,7 +13,7 @@ AVR_SIZE = $(ARDUINO_BIN)/avr-size
 CCAVR_FLAGS = -g -Os -w -std=gnu++11 -fpermissive -fno-exceptions -ffunction-sections -fuse-linker-plugin -Wl,--gc-sections -fdata-sections -fno-threadsafe-statics -Wno-error=narrowing -MMD -flto -mmcu=atmega328p -DF_CPU=16000000L -DARDUINO=10813 -DARDUINO_AVR_UNO -DARDUINO_ARCH_AVR
 INCLUDE_AVR = -I$(ARDUINO_AVR)/cores/arduino -I$(ARDUINO_AVR)/variants/standard -Isrc/arduino
 CCAVR = $(ARDUINO_BIN)/avr-g++
-ARDUINO_LIBS = arduino_core.a core/wiring_digital.c.o core/wiring_pulse.c.o core/HardwareSerial.cpp.o core/HardwareSerial0.cpp.o core/Print.cpp.o core/abi.cpp.o src/arduino/SPI.cpp src/arduino/rfid/MFRC522.cpp src/arduino/Ultrasonic.cpp
+ARDUINO_LIBS = arduino_core.a core/wiring_digital.c.o core/wiring_pulse.c.o core/HardwareSerial.cpp.o core/HardwareSerial0.cpp.o core/Print.cpp.o core/abi.cpp.o src/arduino/SPI.cpp src/arduino/rfid/MFRC522.cpp src/arduino/Ultrasonic.cpp src/arduino/SoftwareSerial.cpp
 ####
 
 

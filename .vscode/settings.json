@@ -4,6 +4,7 @@
         "*.pbs": "shellscript",
         "schwaemm.h": "c",
         "string.h": "c",
-        "peer.h": "c"
+        "peer.h": "c",
+        "led.h": "c"
     }
 }
