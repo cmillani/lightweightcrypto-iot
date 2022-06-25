@@ -14,6 +14,25 @@ PeerState client;
 unsigned char msg[MSG_LEN] = "HELLO WORLD";
 unsigned char cypher[CYPHER_LEN];
 
+//////// MODE
+#define TAG_MODE_PIN 14 // A0
+#define LED_MODE_PIN 15 // A1
+#define US_MODE_PIN 16 // A2
+
+typedef enum MODE {
+  DISTANCE_MODE = 0x01, 
+  TAG_MODE = 0x02, 
+  LED_MODE = 0x03, 
+  NO_MODE = 0x04,
+} EMODE;
+void setup_modeselector(int usModePin, int tagModePin, int ledModePin);
+MODE get_mode(int usModePin, int tagModePin, int ledModePin);
+
+//////// LED
+#define LED_PIN 8
+void send_led();
+void setup_led();
+
 //////// RFID
 #define SS_PIN 10
 #define RST_PIN 9
@@ -36,6 +55,8 @@ void setup()
   initPeer(&client);
   Serial.begin(9600);
   setup_rfid();
+  setup_led();
+  setup_modeselector(US_MODE_PIN, TAG_MODE_PIN, LED_MODE_PIN);
   while (!Serial)
   {
     ; // wait for serial port to connect. Needed for native USB port only
@@ -44,16 +65,61 @@ void setup()
 
 void loop()
 {
-  send_distance();
-  return;
-  send_rfid();
-  return;
-  digitalWrite(LED_BUILTIN, HIGH); // turn the LED on (HIGH is the voltage level)
+  MODE mode = get_mode(US_MODE_PIN, TAG_MODE_PIN, LED_MODE_PIN);
+  switch (mode) {
+    case (DISTANCE_MODE): {
+      send_distance();
+      break;
+    }
+    case (TAG_MODE): {
+      send_rfid();
+      break;
+    }
+    case (LED_MODE): {
+      send_led();
+      break;
+    }
+  }
+}
+
+/**
+ * Mode Selector
+ * 
+ */
+
+void setup_modeselector(int usModePin, int tagModePin, int ledModePin) {
+  pinMode(5, INPUT_PULLUP);
+}
+
+MODE get_mode(int usModePin, int tagModePin, int ledModePin) {
+  // This could be simplified accessing the register directly and using a bitmap
+  if (digitalRead(usModePin)) {
+    return DISTANCE_MODE;
+  } else if (digitalRead(tagModePin)) {
+    return TAG_MODE;
+  } else if (digitalRead(ledModePin)) {
+    return LED_MODE;
+  } else {
+    return NO_MODE;
+  }
+}
+
+/**
+ * LED
+ * 
+ */
+
+void send_led() {
+  digitalWrite(LED_PIN, HIGH); // turn the LED on (HIGH is the voltage level)
   delay(1000);                     // wait for a second
-  digitalWrite(LED_BUILTIN, LOW);  // turn the LED off by making the voltage LOW
+  digitalWrite(LED_PIN, LOW);  // turn the LED off by making the voltage LOW
   delay(1000);
-  sendMessage(&client, msg, cypher);
-  Serial.write(cypher, CYPHER_LEN);
+  //sendMessage(&client, msg, cypher);
+  //Serial.write(cypher, CYPHER_LEN);
+}
+
+void setup_led() {
+  pinMode(LED_PIN, OUTPUT);
 }
 
 /**
