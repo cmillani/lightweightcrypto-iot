@@ -1,6 +1,9 @@
 #include <stdio.h>
 #include <string.h>
 #include "peer/peer.h"
+#ifdef DEBUGARDUINO
+  #include "Arduino.h"
+#endif
 
 unsigned char key[32] = "000102030405060708090A0B0C0D0E0F";
 unsigned char nonce[32] = "000102030405060708090A0B0C0D0E0F"; // Should probably be different than key
@@ -28,6 +31,10 @@ int encryptMessage(PeerStateP peer, UChar msg[32], UChar * cypher) {
     #endif
     incrementNonce(peer);
   } else {
+    #ifdef DEBUGARDUINO
+      Serial.print("ERROR: unable to encrypt, return code: ");
+      Serial.println(res);
+    #endif
     #ifdef DEBUG
       printf("ERROR: Invalid return %d\n", res);
     #endif
@@ -44,6 +51,10 @@ int decryptMessage(PeerStateP peer, UChar cypher[CYPHER_LEN], UChar * msg) {
     #endif
     incrementNonce(peer);
   } else {
+    #ifdef DEBUGARDUINO
+      Serial.print("ERROR: unable to decrypt, return code: ");
+      Serial.println(res);
+    #endif
     #ifdef DEBUG
       printf("ERROR: Decode invalid return %d\n", res);
       printf("RetornoDecode>>\n\tcod::%d\n\tlen::%llu\n\tmsg::%s\n", res, msgLen, msg);

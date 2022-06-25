@@ -5,6 +5,7 @@
         "schwaemm.h": "c",
         "string.h": "c",
         "peer.h": "c",
-        "led.h": "c"
+        "led.h": "c",
+        "arduino.h": "c"
     }
 }

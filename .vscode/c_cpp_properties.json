@@ -10,7 +10,7 @@
                 "/Applications/Arduino.app/Contents/Java/hardware/arduino/avr/cores/arduino", 
                 "/Applications/Arduino.app/Contents/Java/hardware/arduino/avr/variants/standard"
             ],
-            "defines": ["USBCON", "ARDUINO=10813"],
+            "defines": ["USBCON", "ARDUINO=10813", "DEBUGARDUINO"],
             "macFrameworkPath": [],
             "compilerPath": "/usr/local/bin/gcc-11",
             "cStandard": "gnu17",

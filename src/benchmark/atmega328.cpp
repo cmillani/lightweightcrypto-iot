@@ -132,12 +132,12 @@ MODE get_mode() {
 
 void send_led() {
   if (mySerial.available()) {
-    Serial.println('Did Receive data');
+    Serial.println("Reading Data");
     mySerial.readBytes(cypher, CYPHER_LEN);
     int res = decryptMessage(&client, cypher, msg);
-    Serial.write(msg, MSG_LEN);
-    Serial.println();
     if (res == 0) {
+      Serial.write(msg, MSG_LEN);
+      Serial.println();
       if (msg[0] == '0') digitalWrite(LED_PIN, LOW);
       else if (msg[0] == '1') digitalWrite(LED_PIN, HIGH);
     }
@@ -199,12 +199,6 @@ void send_rfid() {
     sprintf(msg + (2*i), "%02x", buffer[i]);
   }
   Serial.println((char *)msg);
-  for (byte i = 0; i < size; i++)
-  {
-    Serial.print(mfrc522.uid.uidByte[i] < 0x10 ? " 0" : " ");
-    Serial.print(mfrc522.uid.uidByte[i], HEX);
-  }
-  Serial.println();
 
   encryptMessage(&client, msg, cypher);
   mySerial.write(cypher, CYPHER_LEN);

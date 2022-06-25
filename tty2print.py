@@ -38,9 +38,7 @@ def read_n_encrypt(buffer: BinaryIO) -> bytes:
     return encrypted
 
 def decrypt_cypher(cypher: bytes) -> bytes: 
-    print(len(cypher))
-    wrote = decrypt.stdin.write(cypher)
-    print(wrote)
+    decrypt.stdin.write(cypher)
     decrypt.stdin.flush()
     decrypted = decrypt.stdout.read(msglen)
     hexencrypted = ''.join(format(x, '02x') for x in cypher)
