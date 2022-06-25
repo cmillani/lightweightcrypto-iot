@@ -29,8 +29,7 @@ typedef enum MODE {
   LED_MODE = 0x03, 
   NO_MODE = 0x04,
 } EMODE;
-void setup_modeselector(int usModePin, int tagModePin, int ledModePin);
-MODE get_mode(int usModePin, int tagModePin, int ledModePin);
+MODE get_mode();
 
 //////// LED
 #define LED_PIN 8
@@ -61,16 +60,16 @@ void setup()
   mySerial.begin(9600);
   setup_rfid();
   setup_led();
-  setup_modeselector(US_MODE_PIN, TAG_MODE_PIN, LED_MODE_PIN);
   while (!Serial)
   {
     ; // wait for serial port to connect. Needed for native USB port only
   }
+  Serial.println("Booted!");
 }
 
 void loop()
 {
-  MODE mode = get_mode(US_MODE_PIN, TAG_MODE_PIN, LED_MODE_PIN);
+  MODE mode = get_mode();
   switch (mode) {
     case (DISTANCE_MODE): {
       send_distance();
@@ -92,21 +91,38 @@ void loop()
  * 
  */
 
-void setup_modeselector(int usModePin, int tagModePin, int ledModePin) {
-  pinMode(5, INPUT_PULLUP);
-}
-
-MODE get_mode(int usModePin, int tagModePin, int ledModePin) {
-  // This could be simplified accessing the register directly and using a bitmap
-  if (digitalRead(usModePin)) {
-    return DISTANCE_MODE;
-  } else if (digitalRead(tagModePin)) {
-    return TAG_MODE;
-  } else if (digitalRead(ledModePin)) {
-    return LED_MODE;
-  } else {
-    return NO_MODE;
+MODE get_mode() {
+  static MODE lastMode = NO_MODE;
+  unsigned char mode = lastMode;
+  if (Serial.available()) {
+    Serial.readBytes(&mode, 1);
+    mode -= '0'; // Converts ascii to integer
+    switch (mode) {
+      case (TAG_MODE): {
+        mode = TAG_MODE;
+        break;
+      }
+      case (DISTANCE_MODE): {
+        mode = DISTANCE_MODE;
+        break;
+      }
+      case (LED_MODE): {
+        mode = LED_MODE;
+        break;
+      }
+      default: {
+        mode = NO_MODE;
+        break;
+      }
+    }
   }
+  if (mode != lastMode) {
+    lastMode = mode;
+    Serial.print("Changing mode to: ");
+    Serial.println(mode);
+  }
+  
+  return mode;
 }
 
 /**
@@ -120,7 +136,7 @@ void send_led() {
   digitalWrite(LED_PIN, LOW);  // turn the LED off by making the voltage LOW
   delay(1000);
   strcpy(msg, "Hello World");
-  sendMessage(&client, msg, cypher);
+  encryptMessage(&client, msg, cypher);
   mySerial.write(cypher, CYPHER_LEN);
 }
 
@@ -141,7 +157,7 @@ void send_distance() {
   Serial.print((char *) msg);
   Serial.println();
 
-  sendMessage(&client, msg, cypher);
+  encryptMessage(&client, msg, cypher);
   mySerial.write(cypher, CYPHER_LEN);
 
   delay(1000);
@@ -180,7 +196,7 @@ void send_rfid() {
   }
   Serial.println();
 
-  sendMessage(&client, msg, cypher);
+  encryptMessage(&client, msg, cypher);
   mySerial.write(cypher, CYPHER_LEN);
   
   delay(1000);

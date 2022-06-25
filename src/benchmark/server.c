@@ -12,7 +12,7 @@ int main(int argc, char* argv[]) {
   for(;;) {
       int read = fread(cypher, sizeof(unsigned char), CYPHER_LEN, stdin);
       if (read == CYPHER_LEN) {
-        receiveMessage(&server, cypher, msg);
+        decryptMessage(&server, cypher, msg);
       } else {
         break; // fread returned wrong size, stdin probably closed
       }

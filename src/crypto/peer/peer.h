@@ -13,8 +13,8 @@ typedef struct PeerState {
   UChar key[KEY_BYTES];
 } PeerState, * PeerStateP;
 
-int sendMessage(PeerStateP thisPeer, UChar msg[32], UChar * cypher);
-int receiveMessage(PeerStateP peer, UChar cypher[CYPHER_LEN], UChar * msg);
+int encryptMessage(PeerStateP thisPeer, UChar msg[32], UChar * cypher);
+int decryptMessage(PeerStateP peer, UChar cypher[CYPHER_LEN], UChar * msg);
 void initPeer(PeerStateP peer);
 
 #endif // PEER_H

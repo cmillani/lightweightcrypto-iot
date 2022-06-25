@@ -15,7 +15,7 @@ void initPeer(PeerStateP peer) {
   memcpy(peer->nonce, nonce, NONCE_BYTES);
 }
 
-int sendMessage(PeerStateP peer, UChar msg[32], UChar * cypher) {
+int encryptMessage(PeerStateP peer, UChar msg[32], UChar * cypher) {
   ULLInt cypherLen;
   int res = crypto_aead_encrypt(cypher, &cypherLen, msg, MSG_LEN, NULL, 0, NULL, peer->nonce, peer->key);
   if (res == 0) { // No Error, nonce should not be reused
@@ -35,7 +35,7 @@ int sendMessage(PeerStateP peer, UChar msg[32], UChar * cypher) {
   return res;
 }
 
-int receiveMessage(PeerStateP peer, UChar cypher[CYPHER_LEN], UChar * msg) {
+int decryptMessage(PeerStateP peer, UChar cypher[CYPHER_LEN], UChar * msg) {
   ULLInt msgLen;
   int res = crypto_aead_decrypt(msg, &msgLen, NULL, cypher, CYPHER_LEN, NULL, 0, peer->nonce, peer->key);
   if (res == 0) { // No Error, nonce should not be reused

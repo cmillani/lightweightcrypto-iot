@@ -20,7 +20,7 @@ int main(int argc, char* argv[]) {
       
       char * ret = fgets((char *) msg, sizeof(msg), stdin);
       if (ret != NULL) {
-        sendMessage(&client, msg, cypher);
+        encryptMessage(&client, msg, cypher);
         int count = fwrite(cypher, sizeof(unsigned char), CYPHER_LEN, serverPipe);
         if (count != CYPHER_LEN) {
           printf("ERROR: Something prevented writing all data, ferror:%d", ferror(serverPipe));
