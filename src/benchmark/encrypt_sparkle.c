@@ -10,6 +10,7 @@ int main(int argc, char* argv[]) {
   unsigned char cypher[CYPHER_LEN] = {0};
 
   for(;;) {
+      memset(msg, 0, sizeof(msg));
       char * ret = fgets((char *) msg, sizeof(msg), stdin);
       if (ret != NULL) {
         encryptMessage(&client, msg, cypher);

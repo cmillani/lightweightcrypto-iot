@@ -27,8 +27,7 @@ def onclose():
 
 atexit.register(onclose)
 
-def read_n_encrypt(buffer: BinaryIO) -> bytes:
-    command = buffer.readline(msglen)
+def encrypt_msg(command: bytes) -> bytes:
     encrypt.stdin.write(command)
     encrypt.stdin.flush()
     encrypted = encrypt.stdout.read(cypherlen)
@@ -46,11 +45,35 @@ def decrypt_cypher(cypher: bytes) -> bytes:
     print(f'Decrypted is: {str(decrypted)}')
     return decrypted
 
+last_command = None
+def handle_command():
+    global last_command
+    msg_command = b"MSG:"
+
+    line = sys.stdin.buffer.readline()
+    if line.startswith(b"RESET!"):
+        print('Reseting!') # TODO: reset nonce only
+    elif line.startswith(b"REPLAY!"):
+        if last_command == None:
+            print("Failed: no last command to replay")
+        else:
+            ser.write(last_command)
+    elif line.startswith(msg_command):
+        msg = line[len(msg_command):] # remove command, left only msg
+        if (len(msg) > msglen):
+            print("Msg too long")
+            return
+        cypher = encrypt_msg(msg)
+        last_command = cypher
+        ser.write(last_command)
+    else:
+        print("Invalid command '{}'!")
+    
+
 print('Ready!')
 while True:
     if sys.stdin in select([sys.stdin], [], [], 0)[0]:
-        encrypted = read_n_encrypt(sys.stdin.buffer)
-        ser.write(encrypted)
+        handle_command()
     if ser.in_waiting:
         arduino_cypher = ser.read(48)
         decrypted = decrypt_cypher(arduino_cypher)
