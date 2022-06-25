@@ -23,6 +23,10 @@ all: bench
 bin:
 	mkdir -p bin
 
+sparkle:
+	${CC} ${CFLAGS} src/benchmark/encrypt_sparkle.c src/crypto/**/*.c -o bin/encrypt_sparkle
+	${CC} ${CFLAGS} src/benchmark/decrypt_sparkle.c src/crypto/**/*.c -o bin/decrypt_sparkle
+
 bench: bin
 	${CC} ${CFLAGS} src/benchmark/client.c src/crypto/**/*.c -o bin/client -DDEBUG
 	${CC} ${CFLAGS} src/benchmark/server.c src/crypto/**/*.c -o bin/server -DDEBUG
