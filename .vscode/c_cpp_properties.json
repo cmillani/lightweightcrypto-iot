@@ -5,10 +5,12 @@
             "includePath": [
                 "${default}",
                 "./src/crypto",
+                "./src/arduino",
+                "/Applications/Arduino.app/Contents/Java/hardware/tools/avr/bin/../lib/gcc/avr/7.3.0/../../../../avr/include",
                 "/Applications/Arduino.app/Contents/Java/hardware/arduino/avr/cores/arduino", 
                 "/Applications/Arduino.app/Contents/Java/hardware/arduino/avr/variants/standard"
             ],
-            "defines": [],
+            "defines": ["USBCON"],
             "macFrameworkPath": [],
             "compilerPath": "/usr/local/bin/gcc-11",
             "cStandard": "gnu17",
