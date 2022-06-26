@@ -8,7 +8,7 @@
 unsigned char key[32] = "000102030405060708090A0B0C0D0E0F";
 unsigned char nonce[32] = "000102030405060708090A0B0C0D0E0F"; // Should probably be different than key
 
-void incrementNonce(UChar * nonce) {
+void incrementNonce(unsigned char * nonce) {
   // FIXME: This implementation should sum whole array
   nonce[0] += 1;
 }
@@ -19,8 +19,8 @@ void initPeer(PeerStateP peer) {
   memcpy(peer->nonce_r, nonce, NONCE_BYTES);
 }
 
-int encryptMessage(PeerStateP peer, UChar msg[32], UChar * cypher) {
-  ULLInt cypherLen;
+int encryptMessage(PeerStateP peer, unsigned char msg[32], unsigned char * cypher) {
+  unsigned long long int cypherLen;
   int res = crypto_aead_encrypt(cypher, &cypherLen, msg, MSG_LEN, NULL, 0, NULL, peer->nonce_w, peer->key);
   if (res == 0) { // No Error, nonce should not be reused
     #ifdef DEBUG
@@ -43,8 +43,8 @@ int encryptMessage(PeerStateP peer, UChar msg[32], UChar * cypher) {
   return res;
 }
 
-int decryptMessage(PeerStateP peer, UChar cypher[CYPHER_LEN], UChar * msg) {
-  ULLInt msgLen;
+int decryptMessage(PeerStateP peer, unsigned char cypher[CYPHER_LEN], unsigned char * msg) {
+  unsigned long long int msgLen;
   int res = crypto_aead_decrypt(msg, &msgLen, NULL, cypher, CYPHER_LEN, NULL, 0, peer->nonce_r, peer->key);
   if (res == 0) { // No Error, nonce should not be reused
     #ifdef DEBUG
@@ -66,23 +66,23 @@ int decryptMessage(PeerStateP peer, UChar cypher[CYPHER_LEN], UChar * msg) {
 
 //////////// BENCH
 
-void init_buffer(UChar *buffer, ULLInt numbytes)
+void init_buffer(unsigned char *buffer, unsigned long long int numbytes)
 {
-  ULLInt i;
+  unsigned long long int i;
   
   for (i = 0; i < numbytes; i++)
-    buffer[i] = (UChar)i;
+    buffer[i] = (unsigned char)i;
 }
 
 void test(int argc, char* argv[]) {
-    UChar key[16] = {0};
-    UChar nonce[32] = {0};
-    UChar msg[32] = "Hello Crypto World";
-    UChar msg2[32] = {0};
-    UChar ad[32] = {0};
-    UChar ct[32 + 16] = {0};
-    ULLInt clen, mlen;
-    ULLInt mlen2, adlen;
+    unsigned char key[16] = {0};
+    unsigned char nonce[32] = {0};
+    unsigned char msg[32] = "Hello Crypto World";
+    unsigned char msg2[32] = {0};
+    unsigned char ad[32] = {0};
+    unsigned char ct[32 + 16] = {0};
+    unsigned long long int clen, mlen;
+    unsigned long long int mlen2, adlen;
 
     init_buffer(key, sizeof(key));
     init_buffer(nonce, sizeof(nonce));

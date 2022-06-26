@@ -6,6 +6,7 @@
         "string.h": "c",
         "peer.h": "c",
         "led.h": "c",
-        "arduino.h": "c"
+        "arduino.h": "c",
+        "internal-xoodoo.h": "c"
     }
 }

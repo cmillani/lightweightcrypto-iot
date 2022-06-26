@@ -1,4 +1,9 @@
+#ifdef XOODYAK
+#include "xoodyak/wrapper.h"
+#else
 #include "sparkle/schwaemm.h"
+#endif
+
 
 #ifndef PEER_H
 #define PEER_H
@@ -9,13 +14,13 @@
 #define CYPHER_LEN 48
 
 typedef struct PeerState {
-  UChar nonce_r[NONCE_BYTES];
-  UChar nonce_w[NONCE_BYTES];
-  UChar key[KEY_BYTES];
+  unsigned char nonce_r[NONCE_BYTES];
+  unsigned char nonce_w[NONCE_BYTES];
+  unsigned char key[KEY_BYTES];
 } PeerState, * PeerStateP;
 
-int encryptMessage(PeerStateP thisPeer, UChar msg[32], UChar * cypher);
-int decryptMessage(PeerStateP peer, UChar cypher[CYPHER_LEN], UChar * msg);
+int encryptMessage(PeerStateP thisPeer, unsigned char msg[32], unsigned char * cypher);
+int decryptMessage(PeerStateP peer, unsigned char cypher[CYPHER_LEN], unsigned char * msg);
 void initPeer(PeerStateP peer);
 
 #endif // PEER_H
