@@ -1,5 +1,6 @@
 ### Custom rules
 bin
+.vscode/*.log
 
 ### Python
 venv
