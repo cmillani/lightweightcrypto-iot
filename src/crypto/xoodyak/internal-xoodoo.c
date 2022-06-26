@@ -22,13 +22,13 @@
 
 #include "internal-xoodoo.h"
 
-// #if defined(__AVR__)
-// #define XOODOO_ASM 1
-// #elif defined(__ARM_ARCH_ISA_THUMB) && __ARM_ARCH == 7
-// #define XOODOO_ASM 1
-// #else
+#if defined(__AVR__) && defined(DOASM)
+#define XOODOO_ASM 1
+#elif defined(__ARM_ARCH_ISA_THUMB) && __ARM_ARCH == 7
+#define XOODOO_ASM 1
+#else
 #define XOODOO_ASM 0
-// #endif
+#endif
 
 #if !XOODOO_ASM
 

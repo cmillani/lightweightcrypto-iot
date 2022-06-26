@@ -243,11 +243,11 @@
  * multiple of 8, so we compose the efficient rotations to produce all
  * other rotation counts of interest. */
 
-// #if defined(__AVR__)
-// #define LW_CRYPTO_ROTATE32_COMPOSED 1
-// #else
+#if defined(__AVR__) && defined(DOASM)
+#define LW_CRYPTO_ROTATE32_COMPOSED 1
+#else
 #define LW_CRYPTO_ROTATE32_COMPOSED 0
-// #endif
+#endif
 
 /* Rotation macros for 32-bit arguments */
 
