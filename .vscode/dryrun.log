@@ -1,7 +1,6 @@
 make --dry-run --keep-going --print-directory
 make: Entering directory `/Users/carlos/Projects/mo421/lightweightcrypto-iot'
 gcc -I src/crypto src/benchmark/client.c src/crypto/peer/*.c src/crypto/sparkle/*.c -o bin/client -DDEBUG
- 
 gcc -I src/crypto src/benchmark/server.c src/crypto/peer/*.c src/crypto/sparkle/*.c -o bin/server -DDEBUG
 make: Leaving directory `/Users/carlos/Projects/mo421/lightweightcrypto-iot'
  
