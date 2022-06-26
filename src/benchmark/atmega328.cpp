@@ -15,7 +15,7 @@ SoftwareSerial mySerial(5, 6); // RX, TX
 
 //////// Crypto
 PeerState client;
-unsigned char msg[MSG_LEN] = "HELLO WORLD";
+unsigned char msg[MSG_LEN] = {0};
 unsigned char cypher[CYPHER_LEN];
 
 //////// MODE
@@ -156,6 +156,7 @@ void setup_led() {
 
 void send_distance() {
   float distance_cm = get_distance_cm();
+  memset(msg, 0, MSG_LEN);
   dtostrf(distance_cm, 1, 2, (char *) msg);
   
   Serial.print("Distancia em cm: ");
@@ -165,7 +166,7 @@ void send_distance() {
   encryptMessage(&client, msg, cypher);
   mySerial.write(cypher, CYPHER_LEN);
 
-  delay(1000);
+  delay(100);
 }
 
 /**
@@ -203,7 +204,7 @@ void send_rfid() {
   encryptMessage(&client, msg, cypher);
   mySerial.write(cypher, CYPHER_LEN);
   
-  delay(1000);
+  delay(500);
 }
 
 void setup_rfid()

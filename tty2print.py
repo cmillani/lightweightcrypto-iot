@@ -27,22 +27,27 @@ def onclose():
 
 atexit.register(onclose)
 
-def encrypt_msg(command: bytes) -> bytes:
+def encrypt_msg(command: bytes, synchronize: bool = True) -> bytes:
     encrypt.stdin.write(command)
     encrypt.stdin.flush()
     encrypted = encrypt.stdout.read(cypherlen)
-    print(f'Command received: {command}')
-    hexencrypted = ''.join(format(x, '02x') for x in encrypted)
-    print(f'Encrypted to (hex): {hexencrypted}')
+    if synchronize:
+        print(f'Command received: {command}')
+        hexencrypted = ''.join(format(x, '02x') for x in encrypted)
+        print(f'Encrypted to (hex): {hexencrypted}\n')
+        decrypt_cypher(encrypted, synchronize=False) # FIXME: implement python to c layer, this is here to synchronize nonces
     return encrypted
 
-def decrypt_cypher(cypher: bytes) -> bytes: 
+def decrypt_cypher(cypher: bytes, synchronize: bool = True) -> bytes: 
     decrypt.stdin.write(cypher)
     decrypt.stdin.flush()
     decrypted = decrypt.stdout.read(msglen)
-    hexencrypted = ''.join(format(x, '02x') for x in cypher)
-    print(f'Cypher is (hex): {hexencrypted}')
-    print(f'Decrypted is: {str(decrypted)}')
+    if synchronize: 
+        hexencrypted = ''.join(format(x, '02x') for x in cypher)
+        print(f'Cypher is (hex): {hexencrypted}')
+        decoded_msg = decrypted.decode('utf8')
+        print(f'Decrypted is: {decoded_msg}\n')
+        encrypt_msg(b'a\n', synchronize=False) # FIXME: implement python to c layer, this is here to synchronize nonces
     return decrypted
 
 last_command = None
@@ -60,7 +65,7 @@ def handle_command():
             ser.write(last_command)
     elif line.startswith(msg_command):
         msg = line[len(msg_command):] # remove command, left only msg
-        if (len(msg) > msglen):
+        if (len(msg) > (msglen - 1)): # FIXME: reserving one character for null termination on the C side
             print("Msg too long")
             return
         cypher = encrypt_msg(msg)
