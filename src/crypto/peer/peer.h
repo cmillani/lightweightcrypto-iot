@@ -9,7 +9,8 @@
 #define CYPHER_LEN 48
 
 typedef struct PeerState {
-  UChar nonce[NONCE_BYTES];
+  UChar nonce_r[NONCE_BYTES];
+  UChar nonce_w[NONCE_BYTES];
   UChar key[KEY_BYTES];
 } PeerState, * PeerStateP;
 

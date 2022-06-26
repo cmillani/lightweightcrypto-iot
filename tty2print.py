@@ -27,27 +27,23 @@ def onclose():
 
 atexit.register(onclose)
 
-def encrypt_msg(command: bytes, synchronize: bool = True) -> bytes:
+def encrypt_msg(command: bytes) -> bytes:
     encrypt.stdin.write(command)
     encrypt.stdin.flush()
     encrypted = encrypt.stdout.read(cypherlen)
-    if synchronize:
-        print(f'Command received: {command}')
-        hexencrypted = ''.join(format(x, '02x') for x in encrypted)
-        print(f'Encrypted to (hex): {hexencrypted}\n')
-        decrypt_cypher(encrypted, synchronize=False) # FIXME: implement python to c layer, this is here to synchronize nonces
+    print(f'Command received: {command}')
+    hexencrypted = ''.join(format(x, '02x') for x in encrypted)
+    print(f'Encrypted to (hex): {hexencrypted}\n')
     return encrypted
 
-def decrypt_cypher(cypher: bytes, synchronize: bool = True) -> bytes: 
+def decrypt_cypher(cypher: bytes) -> bytes: 
     decrypt.stdin.write(cypher)
     decrypt.stdin.flush()
     decrypted = decrypt.stdout.read(msglen)
-    if synchronize: 
-        hexencrypted = ''.join(format(x, '02x') for x in cypher)
-        print(f'Cypher is (hex): {hexencrypted}')
-        decoded_msg = decrypted.decode('utf8')
-        print(f'Decrypted is: {decoded_msg}\n')
-        encrypt_msg(b'a\n', synchronize=False) # FIXME: implement python to c layer, this is here to synchronize nonces
+    hexencrypted = ''.join(format(x, '02x') for x in cypher)
+    print(f'Cypher is (hex): {hexencrypted}')
+    decoded_msg = decrypted.decode('ascii')
+    print(f'Decrypted is: {decoded_msg}\n')
     return decrypted
 
 last_command = None

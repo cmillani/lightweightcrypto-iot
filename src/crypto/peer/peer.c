@@ -8,19 +8,20 @@
 unsigned char key[32] = "000102030405060708090A0B0C0D0E0F";
 unsigned char nonce[32] = "000102030405060708090A0B0C0D0E0F"; // Should probably be different than key
 
-void incrementNonce(PeerStateP peer) {
+void incrementNonce(UChar * nonce) {
   // FIXME: This implementation should sum whole array
-  peer->nonce[0] += 1;
+  nonce[0] += 1;
 }
 
 void initPeer(PeerStateP peer) {
   memcpy(peer->key, key, KEY_BYTES);
-  memcpy(peer->nonce, nonce, NONCE_BYTES);
+  memcpy(peer->nonce_w, nonce, NONCE_BYTES);
+  memcpy(peer->nonce_r, nonce, NONCE_BYTES);
 }
 
 int encryptMessage(PeerStateP peer, UChar msg[32], UChar * cypher) {
   ULLInt cypherLen;
-  int res = crypto_aead_encrypt(cypher, &cypherLen, msg, MSG_LEN, NULL, 0, NULL, peer->nonce, peer->key);
+  int res = crypto_aead_encrypt(cypher, &cypherLen, msg, MSG_LEN, NULL, 0, NULL, peer->nonce_w, peer->key);
   if (res == 0) { // No Error, nonce should not be reused
     #ifdef DEBUG
       printf("RetornoCifra>>\n\tcod:%d\n\tlen:%llu\n\tcypher:", res, cypherLen);
@@ -29,7 +30,7 @@ int encryptMessage(PeerStateP peer, UChar msg[32], UChar * cypher) {
       }
       printf("\n");
     #endif
-    incrementNonce(peer);
+    incrementNonce(peer->nonce_w);
   } else {
     #ifdef DEBUGARDUINO
       Serial.print("ERROR: unable to encrypt, return code: ");
@@ -44,12 +45,12 @@ int encryptMessage(PeerStateP peer, UChar msg[32], UChar * cypher) {
 
 int decryptMessage(PeerStateP peer, UChar cypher[CYPHER_LEN], UChar * msg) {
   ULLInt msgLen;
-  int res = crypto_aead_decrypt(msg, &msgLen, NULL, cypher, CYPHER_LEN, NULL, 0, peer->nonce, peer->key);
+  int res = crypto_aead_decrypt(msg, &msgLen, NULL, cypher, CYPHER_LEN, NULL, 0, peer->nonce_r, peer->key);
   if (res == 0) { // No Error, nonce should not be reused
     #ifdef DEBUG
       printf("RetornoDecode>>\n\tcod::%d\n\tlen::%llu\n\tmsg::%s\n", res, msgLen, msg);
     #endif
-    incrementNonce(peer);
+    incrementNonce(peer->nonce_r);
   } else {
     #ifdef DEBUGARDUINO
       Serial.print("ERROR: unable to decrypt, return code: ");
