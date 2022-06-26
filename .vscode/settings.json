@@ -7,6 +7,7 @@
         "peer.h": "c",
         "led.h": "c",
         "arduino.h": "c",
-        "internal-xoodoo.h": "c"
+        "internal-xoodoo.h": "c",
+        "lwc_crypto_aead.h": "c"
     }
 }

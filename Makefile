@@ -23,34 +23,48 @@ all: bench
 bin:
 	mkdir -p bin
 
+###### Set Flags
+set_debug:
+	$(eval CFLAGS=${CFLAGS} -DDEBUG)
+
+set_xoodyak:
+	$(eval CFLAGS=${CFLAGS} -DXOODYAK)
+	$(eval RULE_NAME=xoodyak)
+	$(eval ADD_FILES=src/crypto/${RULE_NAME}/*.c)
+
+set_xoodyak_asm: set_xoodyak
+	$(eval CFLAGS=${CFLAGS} -DDOASM)
+	$(eval RULE_NAME=xoodyak_asm)
+	$(eval ADD_FILES=${ADD_FILES} src/crypto/xoodyak/internal-xoodoo-avr.S)
+
+set_sparkle:
+	$(eval CFLAGS=${CFLAGS} -DSPARKLE)
+	$(eval RULE_NAME=sparkle)
+	$(eval ADD_FILES=src/crypto/${RULE_NAME}/*.c)
+
+set_gcm:
+	$(eval CFLAGS=${CFLAGS} -DGCM)
+	$(eval RULE_NAME=gcm)
+	$(eval ADD_FILES=src/crypto/${RULE_NAME}/*.c)
+
 ###### Py tools
 
-sparkle:
-	${CC} ${CFLAGS} src/benchmark/encrypt_sparkle.c src/crypto/peer/*.c src/crypto/sparkle/*.c -o bin/encrypt_sparkle
-	${CC} ${CFLAGS} src/benchmark/decrypt_sparkle.c src/crypto/peer/*.c src/crypto/sparkle/*.c -o bin/decrypt_sparkle
+base_tools:
+	${CC} ${CFLAGS} src/benchmark/encrypt.c src/crypto/peer/*.c ${ADD_FILES} -o bin/encrypt_${RULE_NAME}
+	${CC} ${CFLAGS} src/benchmark/decrypt.c src/crypto/peer/*.c ${ADD_FILES} -o bin/decrypt_${RULE_NAME}
 
-xoodyak:
-	${CC} ${CFLAGS} -DXOODYAK src/benchmark/encrypt_sparkle.c src/crypto/peer/*.c src/crypto/xoodyak/*.c -o bin/encrypt_xoodyak
-	${CC} ${CFLAGS} -DXOODYAK src/benchmark/decrypt_sparkle.c src/crypto/peer/*.c src/crypto/xoodyak/*.c -o bin/decrypt_xoodyak
+tools_sparkle: set_sparkle base_tools
+tools_xoodyak: set_xoodyak base_tools
+tools_gcm: set_gcm base_tools
 
 ###### Tests
 
-test_sparkle:
-	${CC} ${CFLAGS} -DDEBUG src/benchmark/test.c src/crypto/peer/*.c src/crypto/sparkle/*.c -o bin/test_sparkle
-
-test_xoodyak:
-	${CC} ${CFLAGS} -DDEBUG -DXOODYAK src/benchmark/test.c src/crypto/peer/*.c src/crypto/xoodyak/*.c -o bin/test_xoodyak
-
-test_base:
+test_base: set_debug
 	${CC} ${CFLAGS} src/benchmark/test.c src/crypto/peer/*.c ${ADD_FILES} -o bin/test_${RULE_NAME}
 
 test_gcm: set_gcm test_base
-
-set_gcm:
-	$(eval CC=g++)
-	$(eval CFLAGS=${CFLAGS} -DGCM -DDEBUG)
-	$(eval RULE_NAME=gcm)
-	$(eval ADD_FILES=src/crypto/${RULE_NAME}/*.cpp)
+test_xoodyak: set_xoodyak test_base
+test_sparkle: set_sparkle test_base
 
 bench: bin
 	${CC} ${CFLAGS} src/benchmark/client.c src/crypto/peer/*.c src/crypto/sparkle/*.c -o bin/client -DDEBUG
@@ -58,60 +72,49 @@ bench: bin
 
 ###### Demo
 
-avr_bin: 
-	${CCAVR} ${CCAVR_FLAGS} ${INCLUDE_AVR} ${CFLAGS} ${ARDUINO_LIBS} -DDEBUGARDUINO src/benchmark/atmega328.cpp src/crypto/peer/*.c src/crypto/sparkle/*.c -o bin/atmega
-	${AVR_OBJCPY} -O ihex -j .eeprom --set-section-flags=.eeprom=alloc,load --no-change-warnings --change-section-lma .eeprom=0 bin/atmega bin/atmega.eep
-	${AVR_OBJCPY} -O ihex -R .eeprom bin/atmega bin/atmega.hex
+set_avr_demo:
+	$(eval ADD_FILES=${ADD_FILES} src/benchmark/atmega328.cpp)
 
-avr_flash: avr_bin
-	${AVRDUDE} -C${AVRDUDE_CONF} -v -patmega328p -carduino -P/dev/cu.usbmodem14101 -b115200 -D -Uflash:w:./bin/atmega.hex:i 
+set_avr_measure:
+	$(eval RULE_NAME=measure_${RULE_NAME})
+	$(eval ADD_FILES=${ADD_FILES} src/benchmark/atmega328_measurements.cpp)
 
-avr_bin_xoodyak: 
-	${CCAVR} ${CCAVR_FLAGS} ${INCLUDE_AVR} ${CFLAGS} ${ARDUINO_LIBS} -DXOODYAK -DDEBUGARDUINO src/benchmark/atmega328.cpp src/crypto/peer/*.c src/crypto/xoodyak/*.c -o bin/atmega_xoodyak
-	${AVR_OBJCPY} -O ihex -j .eeprom --set-section-flags=.eeprom=alloc,load --no-change-warnings --change-section-lma .eeprom=0 bin/atmega_xoodyak bin/atmega_xoodyak.eep
-	${AVR_OBJCPY} -O ihex -R .eeprom bin/atmega_xoodyak bin/atmega_xoodyak.hex
+base_avr_bin:
+	${CCAVR} ${CCAVR_FLAGS} ${INCLUDE_AVR} ${CFLAGS} ${ARDUINO_LIBS} -DDEBUGARDUINO src/crypto/peer/*.c ${ADD_FILES} -o bin/atmega_${RULE_NAME}
+	${AVR_OBJCPY} -O ihex -j .eeprom --set-section-flags=.eeprom=alloc,load --no-change-warnings --change-section-lma .eeprom=0 bin/atmega_${RULE_NAME} bin/atmega_${RULE_NAME}.eep
+	${AVR_OBJCPY} -O ihex -R .eeprom bin/atmega_${RULE_NAME} bin/atmega_${RULE_NAME}.hex
 
-avr_flash_xoodyak: avr_bin_xoodyak
-	${AVRDUDE} -C${AVRDUDE_CONF} -v -patmega328p -carduino -P/dev/cu.usbmodem14101 -b115200 -D -Uflash:w:./bin/atmega_xoodyak.hex:i 
+base_avr_flash:
+	${AVRDUDE} -C${AVRDUDE_CONF} -v -patmega328p -carduino -P/dev/cu.usbmodem14101 -b115200 -D -Uflash:w:./bin/atmega_${RULE_NAME}.hex:i 
 
-###### Measurements
+base_avr_measure: set_avr_measure base_avr_bin
+base_avr_demo: set_avr_demo base_avr_bin
 
-avr_measure:
-	${CCAVR} ${CCAVR_FLAGS} ${INCLUDE_AVR} ${CFLAGS} ${ARDUINO_LIBS} src/benchmark/atmega328_measurements.cpp src/crypto/peer/*.c src/crypto/sparkle/*.c -o bin/atmega_measure
-	${AVR_OBJCPY} -O ihex -j .eeprom --set-section-flags=.eeprom=alloc,load --no-change-warnings --change-section-lma .eeprom=0 bin/atmega_measure bin/atmega_measure.eep
-	${AVR_OBJCPY} -O ihex -R .eeprom bin/atmega_measure bin/atmega_measure.hex
+# Sparkle
+avr_bin_demo_sparkle: set_sparkle base_avr_demo
+avr_flash_demo_sparkle: avr_bin_demo_sparkle base_avr_flash
+avr_bin_measure_sparkle: set_sparkle base_avr_measure
+avr_flash_measure_sparkle: avr_bin_measure_sparkle base_avr_flash
 
-avr_flash_measure: avr_measure
-	${AVRDUDE} -C${AVRDUDE_CONF} -v -patmega328p -carduino -P/dev/cu.usbmodem14101 -b115200 -D -Uflash:w:./bin/atmega_measure.hex:i 
+# Xoodyak
+avr_bin_demo_xoodyak: set_xoodyak base_avr_demo
+avr_flash_demo_xoodyak: avr_bin_demo_xoodyak base_avr_flash
+avr_bin_measure_xoodyak: set_xoodyak base_avr_measure
+avr_flash_measure_xoodyak: avr_bin_measure_xoodyak base_avr_flash
 
-avr_measure_xoodyak:
-	${CCAVR} ${CCAVR_FLAGS} ${INCLUDE_AVR} ${CFLAGS} ${ARDUINO_LIBS} -DXOODYAK -DDEBUGARDUINO src/benchmark/atmega328_measurements.cpp src/crypto/peer/*.c src/crypto/xoodyak/*.c -o bin/atmega_measure_xoodyak
-	${AVR_OBJCPY} -O ihex -j .eeprom --set-section-flags=.eeprom=alloc,load --no-change-warnings --change-section-lma .eeprom=0 bin/atmega_measure_xoodyak bin/atmega_measure_xoodyak.eep
-	${AVR_OBJCPY} -O ihex -R .eeprom bin/atmega_measure_xoodyak bin/atmega_measure_xoodyak.hex
+# Xoodyak ASM
+avr_bin_demo_xoodyak_asm: set_xoodyak_asm base_avr_demo
+avr_flash_demo_xoodyak_asm: avr_bin_demo_xoodyak_asm base_avr_flash
+avr_bin_measure_xoodyak_asm: set_xoodyak_asm base_avr_measure
+avr_flash_measure_xoodyak_asm: avr_bin_measure_xoodyak_asm base_avr_flash
 
-avr_flash_measure_xoodyak: avr_measure_xoodyak
-	${AVRDUDE} -C${AVRDUDE_CONF} -v -patmega328p -carduino -P/dev/cu.usbmodem14101 -b115200 -D -Uflash:w:./bin/atmega_measure_xoodyak.hex:i 
-
-avr_measure_xoodyak_asm:
-	${CCAVR} ${CCAVR_FLAGS} ${INCLUDE_AVR} ${CFLAGS} ${ARDUINO_LIBS} -DDOASM -DXOODYAK -DDEBUGARDUINO src/benchmark/atmega328_measurements.cpp src/crypto/peer/*.c src/crypto/xoodyak/*.c src/crypto/xoodyak/internal-xoodoo-avr.S -o bin/atmega_measure_xoodyak_asm
-	${AVR_OBJCPY} -O ihex -j .eeprom --set-section-flags=.eeprom=alloc,load --no-change-warnings --change-section-lma .eeprom=0 bin/atmega_measure_xoodyak_asm bin/atmega_measure_xoodyak_asm.eep
-	${AVR_OBJCPY} -O ihex -R .eeprom bin/atmega_measure_xoodyak_asm bin/atmega_measure_xoodyak_asm.hex
-
-avr_flash_measure_xoodyak_asm: avr_measure_xoodyak_asm
-	${AVRDUDE} -C${AVRDUDE_CONF} -v -patmega328p -carduino -P/dev/cu.usbmodem14101 -b115200 -D -Uflash:w:./bin/atmega_measure_xoodyak_asm.hex:i 
+# GCM
+avr_bin_demo_gcm: set_gcm base_avr_demo
+avr_flash_demo_gcm: avr_bin_demo_gcm base_avr_flash
+avr_bin_measure_gcm: set_gcm base_avr_measure
+avr_flash_measure_gcm: avr_bin_measure_gcm base_avr_flash
 
 ###### Misc
-
-testone: 
-	$(eval CFLAGS=${CFLAGS} -DGCM -DDEBUG)
-
-testtwo: testone
-	@echo ${CFLAGS}
-
-testecho:
-	echo ${VARIABLE}
-
-testthree: testone testecho
 
 .PHONY: clean
 clean:

@@ -6,8 +6,9 @@ make all --print-data-base --no-builtin-variables --no-builtin-rules --question
 # PARTICULAR PURPOSE.
 
 # This program built for i386-apple-darwin11.3.0
+ 
 
-# Make data base, printed on Sun Jun 26 14:35:03 2022
+# Make data base, printed on Sun Jun 26 17:36:14 2022
 
 # Variables
 
@@ -29,6 +30,7 @@ VSCODE_LOG_NATIVE = false
 ARDUINO_LIBS = arduino_core.a core/wiring_digital.c.o core/WString.cpp.o core/wiring_pulse.c.o core/HardwareSerial.cpp.o core/HardwareSerial0.cpp.o core/Stream.cpp.o core/Print.cpp.o core/abi.cpp.o src/arduino/SPI.cpp src/arduino/rfid/MFRC522.cpp src/arduino/Ultrasonic.cpp src/arduino/SoftwareSerial.cpp
 # automatic
 ?D = $(patsubst %/,%,$(dir $?))
+ 
 # environment
 _fzf_orig_completion_git = complete -o bashdefault -o default -o nospace -F %s git #__git_wrap__git_main
 # environment
@@ -207,6 +209,7 @@ TMPDIR = /var/folders/r8/j6rlt24n47vb95h4dygn6j7h0000gn/T/
 VSCODE_IPC_HOOK = /Users/carlos/Library/Application Support/Code/1.67.2-main.sock
 # environment
 _fzf_orig_completion_ld = complete -o default -F %s ld #_longopt
+ 
 # makefile
 MAKEFLAGS = Rrqp
 # environment
@@ -215,6 +218,7 @@ MFLAGS = -Rrqp
 *D = $(patsubst %/,%,$(dir $*))
 # environment
 XPC_SERVICE_NAME = application.com.microsoft.VSCode.8654395336.8654395342
+ 
 # environment
 _fzf_orig_completion_head = complete -o default -F %s head #_longopt
 # automatic
@@ -234,12 +238,10 @@ COMMAND_MODE = unix2003
 # default
 MAKEFILES := 
 # automatic
- 
 <F = $(notdir $<)
 # environment
 _fzf_orig_completion_wc = complete -o default -F %s wc #_longopt
 # makefile (from `Makefile', line 7)
- 
 AVRDUDE_CONF = /Applications/Arduino.app/Contents/Java/hardware/tools/avr/etc/avrdude.conf
 # environment
 _fzf_orig_completion_mv = complete -o default -F %s mv #_longopt
@@ -282,12 +284,14 @@ VSCODE_PID = 3837
 # environment
 _fzf_orig_completion_sort = complete -o default -F %s sort #_longopt
 # variable set hash-table stats:
+ 
 # Load=134/1024=13%, Rehash=0, Collisions=9/164=5%
 
 # Pattern-specific Variable Values
 
 # No pattern-specific variable values.
 
+ 
 # Directories
 
 # . (device 16777220, inode 8654419347): 15 files, no impossibilities.
@@ -300,39 +304,32 @@ _fzf_orig_completion_sort = complete -o default -F %s sort #_longopt
 
 # Files
 
-avr_bin:
+base_avr_flash:
 #  Implicit rule search has not been done.
 #  Modification time never checked.
 #  File has not been updated.
-#  commands to execute (from `Makefile', line 51):
-	${CCAVR} ${CCAVR_FLAGS} ${INCLUDE_AVR} ${CFLAGS} ${ARDUINO_LIBS} -DDEBUGARDUINO src/benchmark/atmega328.cpp src/crypto/peer/*.c src/crypto/sparkle/*.c -o bin/atmega
-	${AVR_OBJCPY} -O ihex -j .eeprom --set-section-flags=.eeprom=alloc,load --no-change-warnings --change-section-lma .eeprom=0 bin/atmega bin/atmega.eep
-	${AVR_OBJCPY} -O ihex -R .eeprom bin/atmega bin/atmega.hex
+#  commands to execute (from `Makefile', line 88):
+	${AVRDUDE} -C${AVRDUDE_CONF} -v -patmega328p -carduino -P/dev/cu.usbmodem14101 -b115200 -D -Uflash:w:./bin/atmega_${RULE_NAME}.hex:i 
 	
 
-avr_flash_xoodyak: avr_bin_xoodyak
+test_xoodyak: set_xoodyak test_base
 #  Implicit rule search has not been done.
 #  Modification time never checked.
 #  File has not been updated.
-#  commands to execute (from `Makefile', line 64):
-	${AVRDUDE} -C${AVRDUDE_CONF} -v -patmega328p -carduino -P/dev/cu.usbmodem14101 -b115200 -D -Uflash:w:./bin/atmega_xoodyak.hex:i 
-	
 
-test_xoodyak:
+avr_flash_measure_sparkle: avr_bin_measure_sparkle base_avr_flash
 #  Implicit rule search has not been done.
 #  Modification time never checked.
 #  File has not been updated.
-#  commands to execute (from `Makefile', line 42):
-	${CC} ${CFLAGS} -DDEBUG -DXOODYAK src/benchmark/test.c src/crypto/peer/*.c src/crypto/xoodyak/*.c -o bin/test_xoodyak
-	
 
-xoodyak:
+set_sparkle:
 #  Implicit rule search has not been done.
 #  Modification time never checked.
 #  File has not been updated.
-#  commands to execute (from `Makefile', line 33):
-	${CC} ${CFLAGS} src/benchmark/encrypt_sparkle.c src/crypto/peer/*.c src/crypto/xoodyak/*.c -o bin/encrypt_xoodyak
-	${CC} ${CFLAGS} src/benchmark/decrypt_sparkle.c src/crypto/peer/*.c src/crypto/xoodyak/*.c -o bin/decrypt_xoodyak
+#  commands to execute (from `Makefile', line 41):
+	$(eval CFLAGS=${CFLAGS} -DSPARKLE)
+	$(eval RULE_NAME=sparkle)
+	$(eval ADD_FILES=src/crypto/${RULE_NAME}/*.c)
 	
 
 all: bench
@@ -346,7 +343,8 @@ all: bench
 
 bin:
 #  Implicit rule search has not been done.
-#  Last modified 2022-06-26 14:34:42
+ 
+#  Last modified 2022-06-26 17:35:59
 #  File has been updated.
 #  Successfully updated.
 #  commands to execute (from `Makefile', line 24):
@@ -358,29 +356,17 @@ bin:
 #  Modification time never checked.
 #  File has not been updated.
 
-test_sparkle:
+test_sparkle: set_sparkle test_base
 #  Implicit rule search has not been done.
 #  Modification time never checked.
 #  File has not been updated.
-#  commands to execute (from `Makefile', line 39):
-	${CC} ${CFLAGS} -DDEBUG src/benchmark/test.c src/crypto/peer/*.c src/crypto/sparkle/*.c -o bin/test_sparkle
-	
 
-sparkle:
+test_base: set_debug
 #  Implicit rule search has not been done.
 #  Modification time never checked.
 #  File has not been updated.
-#  commands to execute (from `Makefile', line 29):
-	${CC} ${CFLAGS} src/benchmark/encrypt_sparkle.c src/crypto/peer/*.c src/crypto/sparkle/*.c -o bin/encrypt_sparkle
-	${CC} ${CFLAGS} src/benchmark/decrypt_sparkle.c src/crypto/peer/*.c src/crypto/sparkle/*.c -o bin/decrypt_sparkle
-	
-
-avr_flash_measure: avr_measure
-#  Implicit rule search has not been done.
-#  Modification time never checked.
-#  File has not been updated.
-#  commands to execute (from `Makefile', line 74):
-	${AVRDUDE} -C${AVRDUDE_CONF} -v -patmega328p -carduino -P/dev/cu.usbmodem14101 -b115200 -D -Uflash:w:./bin/atmega_measure.hex:i 
+#  commands to execute (from `Makefile', line 63):
+	${CC} ${CFLAGS} src/benchmark/test.c src/crypto/peer/*.c ${ADD_FILES} -o bin/test_${RULE_NAME}
 	
 
 # Not a target:
@@ -389,22 +375,55 @@ avr_flash_measure: avr_measure
 #  Modification time never checked.
 #  File has not been updated.
 
+avr_bin_demo_xoodyak_asm: set_xoodyak_asm base_avr_demo
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
 # Not a target:
 Makefile:
 #  Implicit rule search has been done.
-#  Last modified 2022-06-26 14:34:12
+#  Last modified 2022-06-26 17:35:54
 #  File has been updated.
 #  Successfully updated.
 # variable set hash-table stats:
 # Load=0/32=0%, Rehash=0, Collisions=0/0=0%
 
-avr_flash: avr_bin
+avr_bin_demo_gcm: set_gcm base_avr_demo
 #  Implicit rule search has not been done.
 #  Modification time never checked.
 #  File has not been updated.
-#  commands to execute (from `Makefile', line 56):
-	${AVRDUDE} -C${AVRDUDE_CONF} -v -patmega328p -carduino -P/dev/cu.usbmodem14101 -b115200 -D -Uflash:w:./bin/atmega.hex:i 
-	
+
+ 
+base_avr_measure: set_avr_measure base_avr_bin
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+avr_bin_demo_xoodyak: set_xoodyak base_avr_demo
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+avr_bin_demo_sparkle: set_sparkle base_avr_demo
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+avr_flash_demo_xoodyak_asm: avr_bin_demo_xoodyak_asm base_avr_flash
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+avr_flash_demo_gcm: avr_bin_demo_gcm base_avr_flash
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+test_gcm: set_gcm test_base
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
 
 # Not a target:
 .DEFAULT:
@@ -412,34 +431,73 @@ avr_flash: avr_bin
 #  Modification time never checked.
 #  File has not been updated.
 
-avr_measure:
+set_avr_demo:
 #  Implicit rule search has not been done.
 #  Modification time never checked.
 #  File has not been updated.
-#  commands to execute (from `Makefile', line 69):
-	${CCAVR} ${CCAVR_FLAGS} ${INCLUDE_AVR} ${CFLAGS} ${ARDUINO_LIBS} src/benchmark/atmega328_measurements.cpp src/crypto/peer/*.c src/crypto/sparkle/*.c -o bin/atmega_measure
-	${AVR_OBJCPY} -O ihex -j .eeprom --set-section-flags=.eeprom=alloc,load --no-change-warnings --change-section-lma .eeprom=0 bin/atmega_measure bin/atmega_measure.eep
-	${AVR_OBJCPY} -O ihex -R .eeprom bin/atmega_measure bin/atmega_measure.hex
+#  commands to execute (from `Makefile', line 76):
+	$(eval ADD_FILES=${ADD_FILES} src/benchmark/atmega328.cpp)
 	
+
+avr_flash_demo_xoodyak: avr_bin_demo_xoodyak base_avr_flash
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+tools_gcm: set_gcm base_tools
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+avr_bin_measure_xoodyak_asm: set_xoodyak_asm base_avr_measure
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+avr_bin_measure_gcm: set_gcm base_avr_measure
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+tools_xoodyak: set_xoodyak base_tools
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
 
 clean:
 #  Phony target (prerequisite of .PHONY).
 #  Implicit rule search has not been done.
+ 
 #  File does not exist.
 #  File has not been updated.
-#  commands to execute (from `Makefile', line 80):
+#  commands to execute (from `Makefile', line 121):
 	rm -rf bin
 	
 
-avr_bin_xoodyak:
+avr_bin_measure_xoodyak: set_xoodyak base_avr_measure
 #  Implicit rule search has not been done.
 #  Modification time never checked.
 #  File has not been updated.
-#  commands to execute (from `Makefile', line 59):
-	${CCAVR} ${CCAVR_FLAGS} ${INCLUDE_AVR} ${CFLAGS} ${ARDUINO_LIBS} -DXOODYAK -DDEBUGARDUINO src/benchmark/atmega328.cpp src/crypto/peer/*.c src/crypto/xoodyak/*.c -o bin/atmega_xoodyak
-	${AVR_OBJCPY} -O ihex -j .eeprom --set-section-flags=.eeprom=alloc,load --no-change-warnings --change-section-lma .eeprom=0 bin/atmega_xoodyak bin/atmega_xoodyak.eep
-	${AVR_OBJCPY} -O ihex -R .eeprom bin/atmega_xoodyak bin/atmega_xoodyak.hex
+
+avr_flash_demo_sparkle: avr_bin_demo_sparkle base_avr_flash
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+base_avr_bin:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  commands to execute (from `Makefile', line 83):
+	${CCAVR} ${CCAVR_FLAGS} ${INCLUDE_AVR} ${CFLAGS} ${ARDUINO_LIBS} -DDEBUGARDUINO src/crypto/peer/*.c ${ADD_FILES} -o bin/atmega_${RULE_NAME}
+	${AVR_OBJCPY} -O ihex -j .eeprom --set-section-flags=.eeprom=alloc,load --no-change-warnings --change-section-lma .eeprom=0 bin/atmega_${RULE_NAME} bin/atmega_${RULE_NAME}.eep
+	${AVR_OBJCPY} -O ihex -R .eeprom bin/atmega_${RULE_NAME} bin/atmega_${RULE_NAME}.hex
 	
+
+tools_sparkle: set_sparkle base_tools
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
 
 bench: bin
 #  Implicit rule search has not been done.
@@ -465,13 +523,94 @@ bench: bin
 # ? := bin
 # variable set hash-table stats:
 # Load=8/32=25%, Rehash=0, Collisions=1/14=7%
-#  commands to execute (from `Makefile', line 45):
+#  commands to execute (from `Makefile', line 70):
 	${CC} ${CFLAGS} src/benchmark/client.c src/crypto/peer/*.c src/crypto/sparkle/*.c -o bin/client -DDEBUG
 	${CC} ${CFLAGS} src/benchmark/server.c src/crypto/peer/*.c src/crypto/sparkle/*.c -o bin/server -DDEBUG
 	
 
+avr_bin_measure_sparkle: set_sparkle base_avr_measure
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+avr_flash_measure_xoodyak_asm: avr_bin_measure_xoodyak_asm base_avr_flash
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+avr_flash_measure_gcm: avr_bin_measure_gcm base_avr_flash
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+set_xoodyak_asm: set_xoodyak
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  commands to execute (from `Makefile', line 36):
+	$(eval CFLAGS=${CFLAGS} -DDOASM)
+	$(eval RULE_NAME=xoodyak_asm)
+	$(eval ADD_FILES=${ADD_FILES} src/crypto/xoodyak/internal-xoodoo-avr.S)
+	
+
+set_avr_measure:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  commands to execute (from `Makefile', line 79):
+	$(eval RULE_NAME=measure_${RULE_NAME})
+	$(eval ADD_FILES=${ADD_FILES} src/benchmark/atmega328_measurements.cpp)
+	
+
+set_gcm:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  commands to execute (from `Makefile', line 46):
+	$(eval CFLAGS=${CFLAGS} -DGCM)
+	$(eval RULE_NAME=gcm)
+	$(eval ADD_FILES=src/crypto/${RULE_NAME}/*.c)
+	
+
+set_debug:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  commands to execute (from `Makefile', line 28):
+	$(eval CFLAGS=${CFLAGS} -DDEBUG)
+	
+
+base_avr_demo: set_avr_demo base_avr_bin
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+avr_flash_measure_xoodyak: avr_bin_measure_xoodyak base_avr_flash
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+base_tools:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  commands to execute (from `Makefile', line 53):
+	${CC} ${CFLAGS} src/benchmark/encrypt.c src/crypto/peer/*.c ${ADD_FILES} -o bin/encrypt_${RULE_NAME}
+	${CC} ${CFLAGS} src/benchmark/decrypt.c src/crypto/peer/*.c ${ADD_FILES} -o bin/decrypt_${RULE_NAME}
+	
+
+set_xoodyak:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  commands to execute (from `Makefile', line 31):
+	$(eval CFLAGS=${CFLAGS} -DXOODYAK)
+	$(eval RULE_NAME=xoodyak)
+	$(eval ADD_FILES=src/crypto/${RULE_NAME}/*.c)
+	
+
 # files hash-table stats:
-# Load=18/1024=2%, Rehash=0, Collisions=0/38=0%
+# Load=43/1024=4%, Rehash=0, Collisions=1/110=1%
 # VPATH Search Paths
 
 # No `vpath' search paths.
@@ -480,11 +619,9 @@ bench: bin
 
 # # of strings in strcache: 1
 # # of strcache buffers: 1
- 
 # strcache size: total = 4096 / max = 4096 / min = 4096 / avg = 4096
 # strcache free: total = 4087 / max = 4087 / min = 4087 / avg = 4087
 
-# Finished Make data base on Sun Jun 26 14:35:03 2022
- 
+# Finished Make data base on Sun Jun 26 17:36:14 2022
 
  
