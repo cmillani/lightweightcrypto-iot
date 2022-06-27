@@ -57,6 +57,15 @@ tools_sparkle: set_sparkle base_tools
 tools_xoodyak: set_xoodyak base_tools
 tools_gcm: set_gcm base_tools
 
+
+###### Benchmark Linux
+base_bench:
+	${CC} ${CFLAGS} src/benchmark/measurements.c src/crypto/peer/*.c ${ADD_FILES} -o bin/measurements_${RULE_NAME}
+
+measure_sparkle: set_sparkle base_bench
+measure_xoodyak: set_xoodyak base_bench
+measure_gcm: set_gcm base_bench
+
 ###### Tests
 
 test_base: set_debug
