@@ -29,7 +29,7 @@
 #include <stdint.h>
 
 #include "data_types.h"
-#include "aes.h"
+#include "AES.h"
 
 void encrypt_message(gcm_state_t * gcm_state, uint8_t *message, uint16_t len) {
     uint8_t cb[16];

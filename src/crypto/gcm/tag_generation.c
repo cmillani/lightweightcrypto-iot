@@ -28,10 +28,10 @@
 
 #include <stdint.h>
 
-#include "cipher.h"
+#include "Cipher.h"
 #include "data_types.h"
 #include "constants.h"
-#include "aes.h"
+#include "AES.h"
 #include "hash.h"
 #include "mul_h.h"
 

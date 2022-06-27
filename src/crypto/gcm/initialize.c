@@ -28,10 +28,10 @@
 
 #include <stdint.h>
 
-#include "cipher.h"
+#include "Cipher.h"
 #include "data_types.h"
 #include "constants.h"
-#include "aes.h"
+#include "AES.h"
 
 void Initialize(uint8_t *state, const uint8_t *key, const uint8_t *nonce) {
     /* aes key schedule + computation of H + computation of icb */

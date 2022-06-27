@@ -29,7 +29,7 @@
 
 #include <stdint.h>
 
-#include "cipher.h"
+#include "Cipher.h"
 #include "constants.h"
 
 
