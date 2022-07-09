@@ -2,6 +2,8 @@
 #include "xoodyak/wrapper.h"
 #elif defined(GCM)
 #include "gcm/lwc_crypto_aead.h"
+#elif defined(EMPTY)
+#include "empty/empty.h"
 #else
 #include "sparkle/schwaemm.h"
 #endif

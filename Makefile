@@ -47,6 +47,11 @@ set_gcm:
 	$(eval RULE_NAME=gcm)
 	$(eval ADD_FILES=src/crypto/${RULE_NAME}/*.c)
 
+set_empty:
+	$(eval CFLAGS=${CFLAGS} -DEMPTY)
+	$(eval RULE_NAME=empty)
+	$(eval ADD_FILES=src/crypto/${RULE_NAME}/*.c)
+
 ###### Py tools
 
 base_tools:
@@ -65,6 +70,7 @@ base_bench:
 measure_sparkle: set_sparkle base_bench
 measure_xoodyak: set_xoodyak base_bench
 measure_gcm: set_gcm base_bench
+measure_empty: set_empty base_bench
 
 ###### Tests
 

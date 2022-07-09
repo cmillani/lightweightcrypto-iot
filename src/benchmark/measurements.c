@@ -22,12 +22,12 @@ int main() {
         gettimeofday(&tv_bef,NULL);
         encryptMessage(&peer, msg, cypher);
         gettimeofday(&tv_aft,NULL);
-        printf("Enc: %d", diff_time(tv_bef, tv_aft));
+        printf("Enc: %lu", diff_time(tv_bef, tv_aft));
 
         gettimeofday(&tv_bef,NULL);	    
         decryptMessage(&peer, cypher, recovered_msg);
         gettimeofday(&tv_aft,NULL);
-        printf("\tDec: %d\n", diff_time(tv_bef, tv_aft));
+        printf("\tDec: %lu\n", diff_time(tv_bef, tv_aft));
     }
 
     return 0;
