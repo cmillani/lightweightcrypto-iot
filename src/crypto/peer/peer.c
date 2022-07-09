@@ -5,8 +5,8 @@
   #include "Arduino.h"
 #endif
 
-unsigned char key[32] = "000102030405060708090A0B0C0D0E0F";
-unsigned char nonce[32] = "000102030405060708090A0B0C0D0E0F"; // Should probably be different than key
+unsigned char key[] = "000102030405060708090A0B0C0D0E0F";
+unsigned char nonce[] = "000102030405060708090A0B0C0D0E0F"; // Should probably be different than key
 
 void incrementNonce(unsigned char * nonce) {
   // FIXME: This implementation should sum whole array

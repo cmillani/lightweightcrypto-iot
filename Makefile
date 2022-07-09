@@ -1,6 +1,6 @@
 ####I386####
-CC=gcc
-CFLAGS=-I src/crypto
+CC=g++
+CFLAGS=-I src/crypto -g -Os -w -std=gnu++11 -fpermissive -fno-exceptions -ffunction-sections -Wl,--gc-sections -fdata-sections -v
 ####AVR####
 ARDUINO_BIN = /Applications/Arduino.app/Contents/Java/hardware/tools/avr/bin
 ARDUINO_AVR = /Applications/Arduino.app/Contents/Java/hardware/arduino/avr
@@ -45,7 +45,7 @@ set_sparkle:
 set_gcm:
 	$(eval CFLAGS=${CFLAGS} -DGCM)
 	$(eval RULE_NAME=gcm)
-	$(eval ADD_FILES=src/crypto/${RULE_NAME}/*.c)
+	$(eval ADD_FILES=src/crypto/${RULE_NAME}/*.c src/crypto/${RULE_NAME}/*.cpp)
 
 set_empty:
 	$(eval CFLAGS=${CFLAGS} -DEMPTY)
@@ -104,6 +104,9 @@ base_avr_flash:
 
 base_avr_measure: set_avr_measure base_avr_bin
 base_avr_demo: set_avr_demo base_avr_bin
+
+# Empty
+avr_bin_measure_empty: set_empty base_avr_measure
 
 # Sparkle
 avr_bin_demo_sparkle: set_sparkle base_avr_demo
