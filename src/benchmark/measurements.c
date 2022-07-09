@@ -20,12 +20,16 @@ int main() {
     printf("Enc(micros)\tDec(micros)\n");
     for (int i = 0; i < 200; i++) {
         gettimeofday(&tv_bef,NULL);
-        encryptMessage(&peer, msg, cypher);
+        for(int i = 0; i<100; i++) {
+            encryptMessage(&peer, msg, cypher);
+        }
         gettimeofday(&tv_aft,NULL);
         printf("Enc: %lu", diff_time(tv_bef, tv_aft));
 
-        gettimeofday(&tv_bef,NULL);	    
-        decryptMessage(&peer, cypher, recovered_msg);
+        gettimeofday(&tv_bef,NULL);	
+        for(int i = 0; i<100; i++) {    
+            decryptMessage(&peer, cypher, recovered_msg);
+        }
         gettimeofday(&tv_aft,NULL);
         printf("\tDec: %lu\n", diff_time(tv_bef, tv_aft));
     }

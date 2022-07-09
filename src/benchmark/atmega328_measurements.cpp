@@ -15,6 +15,8 @@ PeerState client;
 unsigned char msg[MSG_LEN] = "Hello World!";
 unsigned char cypher[CYPHER_LEN];
 
+int iteration = 0;
+
 void setup()
 {
   initPeer(&client);
@@ -28,6 +30,11 @@ void setup()
 
 void loop()
 {
+  if (iteration >= 100) {
+    return;
+  }
+  iteration++;
+  
   unsigned long before, after;
   int ret;
 
