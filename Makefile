@@ -1,5 +1,5 @@
 ####I386####
-CC=g++
+CC=gcc
 CFLAGS=-I src/crypto -g -Os -w -std=gnu++11 -fpermissive -fno-exceptions -ffunction-sections -fuse-linker-plugin -Wl,--gc-sections -fdata-sections -fno-threadsafe-statics -Wno-error=narrowing -MMD -flto
 ####AVR####
 ARDUINO_BIN = /Applications/Arduino.app/Contents/Java/hardware/tools/avr/bin
