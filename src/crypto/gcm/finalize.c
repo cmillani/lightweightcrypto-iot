@@ -28,7 +28,7 @@
 
 #include <stdint.h>
 
-#include "Cipher.h"
+#include "cipher.h"
 #include "constants.h"
 
 // By CC - added const qualifier to key

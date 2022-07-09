@@ -1,6 +1,6 @@
 #include "lwc_crypto_aead.h"
 #include "api.h"
-#include "Cipher.h"
+#include "cipher.h"
 #include "constants.h"
 #include <string.h>
 

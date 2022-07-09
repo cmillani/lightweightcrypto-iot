@@ -57,7 +57,7 @@
 #endif /* MSP */
 
 
-#include "Cipher.h"
+#include "cipher.h"
 #include "common.h"
 #include "constants.h"
 #include "test_vectors.h"
