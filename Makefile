@@ -103,7 +103,12 @@ base_avr_flash:
 	${AVRDUDE} -C${AVRDUDE_CONF} -v -patmega328p -carduino -P/dev/cu.usbmodem14101 -b115200 -D -Uflash:w:./bin/atmega_${RULE_NAME}.hex:i 
 
 base_avr_measure: set_avr_measure base_avr_bin
-base_avr_demo: set_avr_demo base_avr_bin
+base_avr_demo: set_avr_demo set_debug_arduino base_avr_bin
+
+set_debug_arduino:
+	$(eval CCAVR = $(ARDUINO_BIN)/avr-g++)
+	$(eval CFLAGS=${CFLAGS} -DDEBUGARDUINO)
+
 
 # Empty
 avr_bin_measure_empty: set_empty base_avr_measure
