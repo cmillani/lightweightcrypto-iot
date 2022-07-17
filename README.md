@@ -19,6 +19,3 @@ Bluetooth is the data path: encrypted data is sent and received here.
 
 Once you have build the programs to encrypt an decrypt, and arduino is running with bluetooth connected, to receive and send data run:
 python tty2print.py --encrypt ./bin/encrypt_sparkle --decrypt ./bin/decrypt_sparkle
-
-
-GCM - felicsv02 (mudei pro gcc e )
